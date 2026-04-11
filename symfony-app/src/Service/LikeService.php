@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Entity\Photo;
+use App\Repository\LikeRepositoryInterface;
+use Exception;
+use Throwable;
+
+class LikeService
+{
+    public function __construct(
+        private LikeRepositoryInterface $likeRepository
+    )
+    {
+    }
+
+    public function likePhoto(Photo $photo): void
+    {
+        try {
+            $this->likeRepository->createLike($photo);
+            $this->likeRepository->updatePhotoCounter($photo, 1);
+        } catch (Throwable) {
+            // TODO: replace with dedicated Exception
+            throw new Exception('Something went wrong while liking the photo');
+        }
+    }
+}

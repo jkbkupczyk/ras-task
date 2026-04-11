@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class SeedDatabaseCommand extends Command
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager
     ) {
         parent::__construct();
     }
@@ -33,41 +33,7 @@ class SeedDatabaseCommand extends Command
         $io->title('Seeding database with sample data');
 
         // Sample users data
-        $usersData = [
-            [
-                'username' => 'nature_lover',
-                'email' => 'nature@example.com',
-                'name' => 'Emma',
-                'lastName' => 'Wilson',
-                'age' => 28,
-                'bio' => 'Passionate about wildlife and nature photography. Exploring the world one photo at a time.',
-            ],
-            [
-                'username' => 'wildlife_pro',
-                'email' => 'wildlife@example.com',
-                'name' => 'James',
-                'lastName' => 'Anderson',
-                'age' => 35,
-                'bio' => 'Professional wildlife photographer with 10 years of experience.',
-            ],
-            [
-                'username' => 'landscape_dreams',
-                'email' => 'landscape@example.com',
-                'name' => 'Sofia',
-                'lastName' => 'Martinez',
-                'age' => 31,
-                'bio' => 'Capturing the beauty of landscapes around the globe.',
-            ],
-            [
-                'username' => 'animal_eyes',
-                'email' => 'animals@example.com',
-                'name' => 'Michael',
-                'lastName' => 'Brown',
-                'age' => 42,
-                'bio' => 'Specializing in close-up animal photography.',
-            ],
-        ];
-
+        $usersData = $this->getUsersData();
         $users = [];
         foreach ($usersData as $userData) {
             $user = new User();
@@ -101,7 +67,70 @@ class SeedDatabaseCommand extends Command
         $this->entityManager->flush();
 
         // Sample photos data with picsum URLs (nature/animals themed)
-        $photosData = [
+        $photosData = $this->getPhotosData();
+        foreach ($photosData as $photoData) {
+            $photo = new Photo();
+            $photo->setImageUrl($photoData['imageUrl'])
+                ->setLocation($photoData['location'])
+                ->setDescription($photoData['description'])
+                ->setCamera($photoData['camera'])
+                ->setTakenAt(new \DateTimeImmutable($photoData['takenAt']))
+                ->setUser($users[$photoData['userIndex']]);
+
+            $this->entityManager->persist($photo);
+
+            $io->text("Created photo: {$photoData['description']}");
+        }
+
+        $this->entityManager->flush();
+
+        $io->success('Database seeded successfully!');
+        $io->info(sprintf('Created %d users, %d auth tokens, and %d photos', count($usersData), count($usersData), count($photosData)));
+
+        return Command::SUCCESS;
+    }
+
+    public function getUsersData(): array
+    {
+        return [
+            [
+                'username' => 'nature_lover',
+                'email' => 'nature@example.com',
+                'name' => 'Emma',
+                'lastName' => 'Wilson',
+                'age' => 28,
+                'bio' => 'Passionate about wildlife and nature photography. Exploring the world one photo at a time.',
+            ],
+            [
+                'username' => 'wildlife_pro',
+                'email' => 'wildlife@example.com',
+                'name' => 'James',
+                'lastName' => 'Anderson',
+                'age' => 35,
+                'bio' => 'Professional wildlife photographer with 10 years of experience.',
+            ],
+            [
+                'username' => 'landscape_dreams',
+                'email' => 'landscape@example.com',
+                'name' => 'Sofia',
+                'lastName' => 'Martinez',
+                'age' => 31,
+                'bio' => 'Capturing the beauty of landscapes around the globe.',
+            ],
+            [
+                'username' => 'animal_eyes',
+                'email' => 'animals@example.com',
+                'name' => 'Michael',
+                'lastName' => 'Brown',
+                'age' => 42,
+                'bio' => 'Specializing in close-up animal photography.',
+            ],
+        ];
+    }
+
+    public function getPhotosData(): array
+    {
+        return [
             [
                 'imageUrl' => 'https://picsum.photos/seed/forest1/800/600',
                 'location' => 'Olympic National Park, Washington',
@@ -199,26 +228,6 @@ class SeedDatabaseCommand extends Command
                 'userIndex' => 2,
             ],
         ];
-
-        foreach ($photosData as $photoData) {
-            $photo = new Photo();
-            $photo->setImageUrl($photoData['imageUrl'])
-                ->setLocation($photoData['location'])
-                ->setDescription($photoData['description'])
-                ->setCamera($photoData['camera'])
-                ->setTakenAt(new \DateTimeImmutable($photoData['takenAt']))
-                ->setUser($users[$photoData['userIndex']]);
-
-            $this->entityManager->persist($photo);
-
-            $io->text("Created photo: {$photoData['description']}");
-        }
-
-        $this->entityManager->flush();
-
-        $io->success('Database seeded successfully!');
-        $io->info(sprintf('Created %d users, %d auth tokens, and %d photos', count($usersData), count($usersData), count($photosData)));
-
-        return Command::SUCCESS;
     }
+
 }

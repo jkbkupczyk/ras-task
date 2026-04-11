@@ -5,13 +5,13 @@ use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
-require dirname(__DIR__).'/config/bootstrap.php';
+require_once dirname(__DIR__).'/config/bootstrap.php';
 
 $env = $_SERVER['APP_ENV'] ?? 'dev';
 $debug = (bool) ($_SERVER['APP_DEBUG'] ?? ('prod' !== $env));
 
 if ($debug) {
-    umask(0000);
+    umask(0000); //NOSONAR - running on DEV mode only
     Debug::enable();
 }
 

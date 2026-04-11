@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Doctrine\DBAL\Connection;
+use App\Service\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,30 +12,29 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuthController extends AbstractController
 {
-    #[Route('/auth/{username}/{token}', name: 'auth_login')]
-    public function login(string $username, string $token, Connection $connection, Request $request): Response
+    public function __construct(
+        private readonly AuthService $authService
+    )
     {
-        $sql = "SELECT * FROM auth_tokens WHERE token = '$token'";
-        $result = $connection->executeQuery($sql);
-        $tokenData = $result->fetchAssociative();
+    }
 
-        if (!$tokenData) {
+    #[Route('/auth/{username}/{token}', name: 'auth_login')]
+    public function login(string $username, string $token, Request $request): Response
+    {
+        $authResult = $this->authService->login($username, $token);
+
+        if (!$authResult->tokenId) {
             return new Response('Invalid token', 401);
         }
-
-        $userSql = "SELECT * FROM users WHERE username = '$username'";
-        $userResult = $connection->executeQuery($userSql);
-        $userData = $userResult->fetchAssociative();
-
-        if (!$userData) {
+        if (!$authResult->userId) {
             return new Response('User not found', 404);
         }
 
         $session = $request->getSession();
-        $session->set('user_id', $userData['id']);
-        $session->set('username', $username);
+        $session->set('user_id', $authResult->userId);
+        $session->set('username', $authResult->username);
 
-        $this->addFlash('success', 'Welcome back, ' . $username . '!');
+        $this->addFlash('success', 'Welcome back, ' . $authResult->username . '!');
 
         return $this->redirectToRoute('home');
     }

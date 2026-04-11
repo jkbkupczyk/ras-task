@@ -6,8 +6,8 @@ namespace App\Controller;
 
 use App\Entity\Photo;
 use App\Entity\User;
-use App\Likes\LikeRepository;
-use App\Likes\LikeService;
+use App\Repository\LikeRepository;
+use App\Service\LikeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,7 +44,7 @@ class PhotoController extends AbstractController
             $likeRepository->unlikePhoto($photo);
             $this->addFlash('info', 'Photo unliked!');
         } else {
-            $likeService->execute($photo);
+            $likeService->likePhoto($photo);
             $this->addFlash('success', 'Photo liked!');
         }
 
