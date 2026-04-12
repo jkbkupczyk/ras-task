@@ -37,3 +37,4 @@ No such file or directory: OCI runtime attempted to invoke a command that was no
 
 - Fix uruchamiania projektu na Podman, wykorzystano _Claude_, model _Sonnet 4.6_
 - Stylowanie CSS dla sekcji `phoenix-integration`, wykorzystano _Codex_, model _gpt-5.4_
+- Stylowanie + Formularz filtrowania zdjęć po polach, wykorzystano _Codex_, model _gpt-5.4_
