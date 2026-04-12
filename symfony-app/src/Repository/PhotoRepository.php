@@ -24,4 +24,13 @@ class PhotoRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // TODO: refactor to bulk op
+    public function saveAll(array $values): void {
+        foreach ($values as $value) {
+            $this->_em->persist($value);
+        }
+        $this->_em->flush();
+    }
+
 }

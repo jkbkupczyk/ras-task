@@ -20,6 +20,7 @@ class LikeService
     public function likePhoto(Photo $photo): void
     {
         try {
+            // TODO: make transactional!!!
             $this->likeRepository->createLike($photo);
             $this->likeRepository->updatePhotoCounter($photo, 1);
         } catch (Throwable) {

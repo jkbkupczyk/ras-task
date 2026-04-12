@@ -12,6 +12,8 @@
 - Funkcjonalność logowania pozwalała na wykonanie SQL Injection - SQL nie był escape'owany. Zamieniono na prepared statement
 - Ogólne sprzątanie klas: dodanie informacji o rzucanych wyjątkach, dodanie importów dla klas std np. Throwable, Exception itd.
 - Rename `LikeService::execute` -> `LikeService::likePhoto` - nazwa execute nic nie mówiła
+- Zamiana zagnieżdżonych if'ów na guard condition
+- Wyniesienie pobierania użytkownika po id do `UserService`
 
 ## Poprawki na które zabrakło czasu
 
@@ -33,3 +35,4 @@ No such file or directory: OCI runtime attempted to invoke a command that was no
 ## Sposób wykorzystania AI
 
 - Fix uruchamiania projektu na Podman, wykorzystano _Claude_, model _Sonnet 4.6_
+- Stylowanie CSS dla sekcji `phoenix-integration`, wykorzystano _Codex_, model _gpt-5.4_

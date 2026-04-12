@@ -14,7 +14,7 @@ final class TxHelper
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public static function runWithinTx(Connection $connection, callable $closure): mixed
     {

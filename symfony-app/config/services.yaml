@@ -7,3 +7,11 @@ services:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
+
+    App\Connectors\PhoenixHttpClient:
+        arguments:
+            $baseUrl: '%env(PHOENIX_BASE_URL)%'
+
+    App\Connectors\PhoenixClient: '@App\Connectors\PhoenixHttpClient'
+
+    App\Utils\CurrentTimeProvider: '@App\Utils\SystemTimeProvider'
