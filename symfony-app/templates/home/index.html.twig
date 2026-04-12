@@ -9,6 +9,68 @@
             margin-top: 30px;
             justify-content: center;
         }
+
+        .filters-panel {
+            max-width: 1260px;
+            margin: 0 auto 30px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .filters-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .filter-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-field label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-field input {
+            border: 1px solid #d9d9d9;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.95em;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-button,
+        .filter-reset {
+            border: none;
+            border-radius: 10px;
+            padding: 11px 18px;
+            font-size: 0.95em;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .filter-button {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-reset {
+            background: #eef1ff;
+            color: #4453a6;
+        }
         
         .photo-card {
             background: white;
@@ -153,6 +215,40 @@
 {% endblock %}
 
 {% block body %}
+    <div class="filters-panel">
+        <form method="get" action="{{ path('home') }}" class="filters-form">
+            <div class="filter-field">
+                <label for="location">Location</label>
+                <input id="location" name="location" type="text" value="{{ filters.location ?? '' }}">
+            </div>
+
+            <div class="filter-field">
+                <label for="camera">Camera</label>
+                <input id="camera" name="camera" type="text" value="{{ filters.camera ?? '' }}">
+            </div>
+
+            <div class="filter-field">
+                <label for="description">Description</label>
+                <input id="description" name="description" type="text" value="{{ filters.description ?? '' }}">
+            </div>
+
+            <div class="filter-field">
+                <label for="taken_at">Taken at</label>
+                <input id="taken_at" name="taken_at" type="date" value="{{ filters.takenAt ? filters.takenAt|date('Y-m-d') : '' }}">
+            </div>
+
+            <div class="filter-field">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" value="{{ filters.username ?? '' }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="filter-button">Filter</button>
+                <a href="{{ path('home') }}" class="filter-reset">Reset</a>
+            </div>
+        </form>
+    </div>
+
     {% if photos|length > 0 %}
         <div class="photo-grid">
             {% for item in photos %}

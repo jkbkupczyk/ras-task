@@ -16,10 +16,10 @@ class PhotoService
     {
     }
 
-    public function getPhotosWithLikes(?User $user): array
+    public function getPhotosWithLikes(?User $user, PhotosListFilter $filter): array
     {
         // TODO: add pagination or some type of limit
-        $photos = $this->photoRepository->findAllWithUsers();
+        $photos = $this->photoRepository->findAllWithUsers($filter);
 
         if (!$user) {
             return array_map($this->mapToPhotoWithLikes(...), $photos);
