@@ -155,13 +155,14 @@
 {% block body %}
     {% if photos|length > 0 %}
         <div class="photo-grid">
-            {% for photo in photos %}
+            {% for item in photos %}
+                {% set photo = item.photo %}
                 <div class="photo-card">
                     <div class="photo-image-container">
                         <img src="{{ photo.imageUrl }}" alt="{{ photo.description }}">
                         {% if currentUser %}
-                            <a href="{{ path('photo_like', {id: photo.id}) }}" class="like-button {{ userLikes[photo.id] ? 'liked' : '' }}">
-                                {{ userLikes[photo.id] ? '❤️' : '🤍' }}
+                            <a href="{{ path('photo_like', {id: photo.id}) }}" class="like-button {{ item.likedByCurrentUser ? 'liked' : '' }}">
+                                {{ item.likedByCurrentUser ? '❤️' : '🤍' }}
                                 <span>{{ photo.likeCounter }}</span>
                             </a>
                         {% else %}
@@ -218,4 +219,3 @@
         </div>
     {% endif %}
 {% endblock %}
-

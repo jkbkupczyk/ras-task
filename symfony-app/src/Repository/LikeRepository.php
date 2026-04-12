@@ -88,4 +88,19 @@ final class LikeRepository extends ServiceEntityRepository implements LikeReposi
         $em->persist($photo);
         $em->flush();
     }
+
+    /**
+     * @return int[]
+     */
+    #[\Override]
+    public function findLikedPhotoIdsByUser(User $user): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select('IDENTITY(l.photo)')
+            ->where('l.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
+
 }

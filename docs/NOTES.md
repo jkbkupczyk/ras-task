@@ -14,6 +14,7 @@
 - Rename `LikeService::execute` -> `LikeService::likePhoto` - nazwa execute nic nie mówiła
 - Zamiana zagnieżdżonych if'ów na guard condition
 - Wyniesienie pobierania użytkownika po id do `UserService`
+- Usunięcie problemu `n+1` podczas pobierania zdjęć (`HomeController`)
 
 ## Poprawki na które zabrakło czasu
 

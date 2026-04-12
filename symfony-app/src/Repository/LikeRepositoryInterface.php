@@ -5,6 +5,7 @@ namespace App\Repository;
 
 use App\Entity\Like;
 use App\Entity\Photo;
+use App\Entity\User;
 
 interface LikeRepositoryInterface
 {
@@ -15,4 +16,6 @@ interface LikeRepositoryInterface
     public function createLike(Photo $photo): Like;
 
     public function updatePhotoCounter(Photo $photo, int $increment): void;
+
+    public function findLikedPhotoIdsByUser(User $user): array;
 }
