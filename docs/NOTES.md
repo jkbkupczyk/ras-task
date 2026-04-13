@@ -15,8 +15,18 @@
 - Zamiana zagnieżdżonych if'ów na guard condition
 - Wyniesienie pobierania użytkownika po id do `UserService`
 - Usunięcie problemu `n+1` podczas pobierania zdjęć (`HomeController`)
+- Dodano testy integracyjne dla `PhoenixPhotoImporterTest`
+- Zrefaktoryzowano proces like'owania zdjęć, usunięto zależności DB z kontrolerów
+- Usunięto globalny stan dla niektórych klas (głównie Repozytoria)
 
 ## Poprawki na które zabrakło czasu
+
+- Proces like'owania zdjęć nie jest odporny na rollback transakcji, dodanie like oraz podbicie licznika nie jest transakcyjne - nie mamy zagwarantowanej atomowości zapytania, do tego powstała klasa `TxHelper`
+- Proces liczenia like nie jest odporny na like przez wielu użytkowników na raz, może wystąpić sytuacja lost update, gdzie mimo np. kliknięcia like przez 2 userów, licznik podbije się tylko o +1
+- nie udało się zaimplementować rate limingu dla PhoenixAPI
+- uporządkować obsługę błędów - błędy DB/SQL potrafią wyciekać do innych warstw
+- więcej testów
+- CICD
 
 ## Problemy i ich rozwiązanie
 
@@ -28,10 +38,13 @@ No such file or directory: OCI runtime attempted to invoke a command that was no
 
 - Lokalnie miałem już uruchomionego PostgreSQL'a na porcie 5432 przez co istniał konflikt i występowały błędy typu: `relation does not exists...` - aplikacja łączyła się do innej bazy. Rozwiązanie to ustawienie HOST_PORT na 5434 (port kontenera pozostawiony na 5432)
 
-## Usprawnienia
+## Usprawnienia (propozycje)
 
 - jeżeli aplikacja miałaby być używana przez osoby z Polski to warto dodać internacjonalizacje (tłumaczenia)
 - strona nie jest responsywna na urządzeniach poniżej 1235px
+- uporządkować obsługę błędów w aplikacji
+- dodać cache'owanie dla wyświetlania profilu użytkownika (dane rzadko się zmieniają)
+- zintegrować proces CI/CD np. GitHub Actions do budowania projektu i testowania
 
 ## Sposób wykorzystania AI
 

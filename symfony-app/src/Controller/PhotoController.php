@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Photo;
-use App\Entity\User;
-use App\Repository\LikeRepository;
 use App\Service\LikeService;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Service\PhotoService;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,12 +14,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PhotoController extends AbstractController
 {
-    #[Route('/photo/{id}/like', name: 'photo_like')]
-    public function like($id, Request $request, EntityManagerInterface $em, ManagerRegistry $managerRegistry): Response
+    public function __construct(
+        private readonly UserService  $userService,
+        private readonly LikeService  $likeService,
+        private readonly PhotoService $photoService,
+    )
     {
-        $likeRepository = new LikeRepository($managerRegistry);
-        $likeService = new LikeService($likeRepository);
+    }
 
+    #[Route('/photo/{id}/like', name: 'photo_like')]
+    public function like($id, Request $request): Response
+    {
         $session = $request->getSession();
         $userId = $session->get('user_id');
 
@@ -31,21 +33,22 @@ class PhotoController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
-        $user = $em->getRepository(User::class)->find($userId);
-        $photo = $em->getRepository(Photo::class)->find($id);
+        $user = $this->userService->findById($userId);
+        if (!$user) {
+            $this->addFlash('error', 'User not found!');
+            throw $this->createAccessDeniedException();
+        }
 
-        $likeRepository->setUser($user);
-
+        $photo = $this->photoService->findById($id);
         if (!$photo) {
             throw $this->createNotFoundException('Photo not found');
         }
 
-        if ($likeRepository->hasUserLikedPhoto($photo)) {
-            $likeRepository->unlikePhoto($photo);
-            $this->addFlash('info', 'Photo unliked!');
-        } else {
-            $likeService->likePhoto($photo);
+        $liked = $this->likeService->like($user, $photo);
+        if ($liked) {
             $this->addFlash('success', 'Photo liked!');
+        } else {
+            $this->addFlash('info', 'Photo unliked!');
         }
 
         return $this->redirectToRoute('home');

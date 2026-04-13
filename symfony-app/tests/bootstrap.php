@@ -1,4 +1,10 @@
 <?php
 
+use Symfony\Component\Dotenv\Dotenv;
+
+require dirname(__DIR__).'/vendor/autoload.php';
 require dirname(__DIR__).'/config/bootstrap.php';
-require_once dirname(__DIR__).'/src/Kernel.php';
+
+if (!isset($_SERVER['DATABASE_URL']) && !isset($_ENV['DATABASE_URL'])) {
+    (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
+}
